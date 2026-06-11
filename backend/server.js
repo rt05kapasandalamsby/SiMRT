@@ -129,6 +129,14 @@ app.get("/health", (_req, res) => {
   });
 });
 
+//COR TEST
+app.get("/cors-test", (req, res) => {
+  res.json({
+    frontendUrl: process.env.FRONTEND_URL,
+    origin: req.headers.origin || null,
+  });
+});
+
 // ─── Midtrans Diagnostic Check ────────────────────────────────────────────────
 app.get("/midtrans-check", (_req, res) => {
   const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
