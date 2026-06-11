@@ -285,7 +285,7 @@ export function WargaIuran({ user }: { user: AuthUser }) {
   useEffect(() => {
     const q = query(
       collection(db, COLL.iuran),
-      where("namaWarga", "==", user.name),
+      where("userId", "==", user.uid),
     );
     const unsub = onSnapshot(
       q,
@@ -299,7 +299,7 @@ export function WargaIuran({ user }: { user: AuthUser }) {
       () => setLoading(false),
     );
     return () => unsub();
-  }, [user.name]);
+  }, [user.uid]);
 
   const lunas = items.filter((i) => i.status === "Lunas");
   const belum = items.filter((i) => i.status === "Belum Bayar");

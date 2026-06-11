@@ -578,12 +578,11 @@ export function TemplateSurat() {
       showToast(`Template "${t.nama}" dibuka`, "success");
 
       try {
-        await updateDoc(doc(db, COLL.templates, t.id), {
-          diunduh: increment(1),
-        });
-      } catch (err) {
-        console.warn("Gagal update jumlah download:", err);
-      }
+        await updateDoc(
+          doc(db, COLL.templates, t.id),
+          { diunduh: increment(1) }
+        );
+      } catch {}
     } finally {
       setTimeout(() => setDownloading(null), 800);
     }

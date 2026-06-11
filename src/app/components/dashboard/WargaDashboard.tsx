@@ -60,7 +60,7 @@ function WargaBeranda({ user, setPage }: { user: AuthUser; setPage: (p: WargaPag
     unsubs.push(onSnapshot(
       query(
         collection(db, COLL.iuran),
-        where("namaWarga", "==", user.name),
+        where("userId", "==", user.uid),
         where("bulan",     "==", bulanIni),
       ),
       (snap) => {
@@ -229,7 +229,11 @@ function WargaPengumuman() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, COLL.pengumuman), orderBy("createdAt", "desc"));
+    const q = query(
+      collection(db, COLL.pengumuman),
+      where("status", "==", "Aktif"),
+      orderBy("createdAt", "desc")
+    );
     const unsub = onSnapshot(q, (snap) => {
       setItems(snap.docs.map((d) => ({ id: d.id, ...d.data() } as PengumumanDoc & { id: string })));
       setLoading(false);
