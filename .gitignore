@@ -9,6 +9,7 @@ build
 backend/serviceAccountKey.json
 backend/scripts/serviceAccountKey.json
 backend/scripts/seedAdmin.js
+backend/README.md
 
 .vscode
 *.log
