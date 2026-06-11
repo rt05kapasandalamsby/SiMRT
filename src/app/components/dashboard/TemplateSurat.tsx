@@ -569,14 +569,21 @@ export function TemplateSurat() {
   // ── Download ──────────────────────────────────────────────────────────────
   const handleDownload = async (t: Template) => {
     if (!t.downloadUrl) return;
+
     setDownloading(t.id);
+
     try {
       window.open(t.downloadUrl, "_blank", "noopener,noreferrer");
-      // Increment download count in Firestore
-      await updateDoc(doc(db, COLL.templates, t.id), { diunduh: increment(1) });
+
       showToast(`Template "${t.nama}" dibuka`, "success");
-    } catch {
-      showToast("Gagal membuka file.", "error");
+
+      try {
+        await updateDoc(doc(db, COLL.templates, t.id), {
+          diunduh: increment(1),
+        });
+      } catch (err) {
+        console.warn("Gagal update jumlah download:", err);
+      }
     } finally {
       setTimeout(() => setDownloading(null), 800);
     }
