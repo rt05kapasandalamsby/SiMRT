@@ -531,22 +531,30 @@ export function TemplateSurat() {
 
   // ── Fetch from Firestore ──────────────────────────────────────────────────
   useEffect(() => {
-    const q = query(
-      collection(db, COLL.templates),
-      orderBy("createdAt", "desc"),
-    );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        setTemplates(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Template),
-        );
-        setLoading(false);
-      },
-      () => setLoading(false),
-    );
-    return () => unsub();
-  }, []);
+  const q = query(
+    collection(db, COLL.templates),
+    orderBy("createdAt", "desc"),
+  );
+
+  const unsub = onSnapshot(
+    q,
+    (snap) => {
+      console.log("Templates loaded:", snap.size);
+
+      setTemplates(
+        snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Template),
+      );
+
+      setLoading(false);
+    },
+    (err) => {
+      console.error("Template error:", err);
+      setLoading(false);
+    },
+  );
+
+  return () => unsub();
+}, []);
 
   // ── Derived ───────────────────────────────────────────────────────────────
   const filtered = useMemo(
