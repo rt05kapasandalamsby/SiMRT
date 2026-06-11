@@ -100,7 +100,7 @@ const app = express();
 
 // CORS — allow React frontend
 const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:5173",
+  (process.env.FRONTEND_URL || "").replace(/\/$/, ""),
   "http://localhost:5173",
   "http://localhost:3000",
 ];
@@ -109,7 +109,11 @@ app.use(
   cors({
     origin: (origin, cb) => {
       // Allow Postman / curl (no origin) or allowed origins
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      if (
+  !origin ||
+  allowedOrigins.includes(origin.replace(/\/$/, ""))
+)
+ return cb(null, true);
       cb(new Error(`CORS: origin ${origin} not allowed`));
     },
     methods:     ["GET", "POST", "OPTIONS"],
