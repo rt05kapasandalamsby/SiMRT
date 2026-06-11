@@ -20,12 +20,13 @@ cp .env.example .env
 ```
 
 Edit `.env`:
+
 ```env
 MIDTRANS_SERVER_KEY=SB-Mid-server-GANTI_DENGAN_SERVER_KEY_ANDA
 MIDTRANS_CLIENT_KEY=Mid-client-ctC99iAlzQNhSwl0
 MIDTRANS_IS_PRODUCTION=false
 PORT=3001
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=https://domain-railway-kamu.up.railway.app
 FIREBASE_SERVICE_ACCOUNT_PATH=./serviceAccountKey.json
 ```
 
@@ -45,6 +46,7 @@ npm run setup
 ```
 
 Output:
+
 ```
 ✅ Firebase Auth user dibuat: ketua@rt05kapasan.id
 ✅ Firestore document dibuat: users/<UID>
@@ -66,11 +68,11 @@ Server berjalan di: `http://localhost:3001`
 
 ## Endpoint
 
-| Method | Path | Keterangan |
-|--------|------|------------|
-| GET | /health | Health check |
-| POST | /create-transaction | Buat transaksi Midtrans |
-| POST | /midtrans-webhook | Terima notifikasi pembayaran |
+| Method | Path                | Keterangan                   |
+| ------ | ------------------- | ---------------------------- |
+| GET    | /health             | Health check                 |
+| POST   | /create-transaction | Buat transaksi Midtrans      |
+| POST   | /midtrans-webhook   | Terima notifikasi pembayaran |
 
 ---
 
@@ -86,12 +88,14 @@ ngrok http 3001
 Copy URL: `https://xxxx.ngrok.io`
 
 Di Midtrans Dashboard:
+
 - Settings → Configuration → Payment Notification URL
 - Isi: `https://xxxx.ngrok.io/midtrans-webhook`
 
 ### Production
 
 Ganti dengan URL deployed backend:
+
 - `https://your-backend.railway.app/midtrans-webhook`
 
 ---
