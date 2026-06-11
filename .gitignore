@@ -6,9 +6,9 @@ build
 .env.*
 !.env.example
 
+backend/serviceAccountKey.json
 backend/scripts/serviceAccountKey.json
-backend/scripts/README.md
-scripts/seedAdmin.js
+backend/scripts/seedAdmin.js
 
 .vscode
 *.log
