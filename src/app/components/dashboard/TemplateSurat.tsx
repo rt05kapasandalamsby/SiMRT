@@ -37,6 +37,7 @@ import {
   query,
   orderBy,
   increment,
+  where,
 } from "firebase/firestore";
 import {
   ref as storageRef,
@@ -516,6 +517,7 @@ function TemplateFormBody({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export function TemplateSurat() {
+  console.log("TemplateSurat mounted");
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"warga" | "admin">("warga");
@@ -531,30 +533,31 @@ export function TemplateSurat() {
 
   // ── Fetch from Firestore ──────────────────────────────────────────────────
   useEffect(() => {
-  const q = query(
-    collection(db, COLL.templates),
-    orderBy("createdAt", "desc"),
-  );
+    const q = query(
+      collection(db, COLL.templates),
+      where("aktif", "==", true),
+      orderBy("createdAt", "desc"),
+    );
 
-  const unsub = onSnapshot(
-    q,
-    (snap) => {
-      console.log("Templates loaded:", snap.size);
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        console.log("Templates loaded:", snap.size);
 
-      setTemplates(
-        snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Template),
-      );
+        setTemplates(
+          snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Template),
+        );
 
-      setLoading(false);
-    },
-    (err) => {
-      console.error("Template error:", err);
-      setLoading(false);
-    },
-  );
+        setLoading(false);
+      },
+      (err) => {
+        console.error("Template error:", err);
+        setLoading(false);
+      },
+    );
 
-  return () => unsub();
-}, []);
+    return () => unsub();
+  }, []);
 
   // ── Derived ───────────────────────────────────────────────────────────────
   const filtered = useMemo(
@@ -586,10 +589,9 @@ export function TemplateSurat() {
       showToast(`Template "${t.nama}" dibuka`, "success");
 
       try {
-        await updateDoc(
-          doc(db, COLL.templates, t.id),
-          { diunduh: increment(1) }
-        );
+        await updateDoc(doc(db, COLL.templates, t.id), {
+          diunduh: increment(1),
+        });
       } catch {}
     } finally {
       setTimeout(() => setDownloading(null), 800);
