@@ -377,15 +377,25 @@ function WargaPengumuman() {
     const unsub = onSnapshot(
       q,
       (snap) => {
+        console.log("PENGUMUMAN SIZE:", snap.size);
+        console.log(
+          "PENGUMUMAN DATA:",
+          snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+        );
+
         setItems(
           snap.docs.map(
             (d) =>
-              ({ id: d.id, ...d.data() }) as PengumumanDoc & { id: string },
-          ),
+              ({ id: d.id, ...d.data() }) as PengumumanDoc & { id: string }
+          )
         );
+
         setLoading(false);
       },
-      () => setLoading(false),
+      (err) => {
+        console.error("PENGUMUMAN ERROR:", err);
+        setLoading(false);
+      }
     );
     return () => unsub();
   }, []);
@@ -496,7 +506,6 @@ function WargaSurat({ user }: { user: AuthUser }) {
     const q = query(
       collection(db, COLL.templates),
       where("aktif", "==", true),
-      orderBy("createdAt", "desc"),
     );
     const unsub = onSnapshot(
       q,
@@ -920,7 +929,10 @@ function WargaProfil({
 // ─── Main WargaDashboard ──────────────────────────────────────────────────────
 export function WargaDashboard() {
   const navigate = useNavigate();
-  const [activePage, setActivePage] = useState<WargaPage>("beranda");
+  const [activePage, setActivePage] = useState<WargaPage>(() => {
+    const saved = localStorage.getItem("wargaPage");
+    return (saved as WargaPage) || "beranda";
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
@@ -940,6 +952,8 @@ export function WargaDashboard() {
   }, [navigate]);
 
   const handleLogout = () => {
+    localStorage.removeItem("wargaPage");
+
     logoutUser();
     showToast("Anda telah berhasil keluar. Sampai jumpa!", "success");
     setTimeout(() => navigate("/login", { replace: true }), 600);
@@ -947,6 +961,7 @@ export function WargaDashboard() {
 
   const handleSetPage = (page: WargaPage) => {
     setActivePage(page);
+    localStorage.setItem("wargaPage", page);
     setSidebarOpen(false);
   };
 

@@ -82,7 +82,10 @@ function renderPage(page: Page, setPage: (p: Page) => void) {
 export function DashboardLayout() {
   const navigate = useNavigate();
 
-  const [activePage,  setActivePage]  = useState<Page>("dashboard");
+  const [activePage, setActivePage] = useState<Page>(() => {
+    const saved = localStorage.getItem("adminPage");
+    return (saved as Page) || "dashboard";
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -111,8 +114,14 @@ export function DashboardLayout() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleSetPage = (page: Page) => { setActivePage(page); setSidebarOpen(false); };
+  const handleSetPage = (page: Page) => {
+    setActivePage(page);
+    localStorage.setItem("adminPage", page);
+    setSidebarOpen(false);
+  };
   const handleLogout  = () => {
+    localStorage.removeItem("adminPage");
+
     logoutUser();
     showToast("Anda telah berhasil keluar. Sampai jumpa!", "success");
     setTimeout(() => navigate("/login", { replace: true }), 600);
