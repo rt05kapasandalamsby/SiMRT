@@ -481,25 +481,35 @@ function WargaSurat({ user }: { user: AuthUser }) {
 
   // Fetch user's surat
   useEffect(() => {
+    console.log("USER UID:", user.uid);
+
     const q = query(
       collection(db, COLL.surat),
-      where("pemohon", "==", user.name),
+      where("userId", "==", user.uid),
       orderBy("createdAt", "desc"),
     );
+
     const unsub = onSnapshot(
       q,
       (snap) => {
+        console.log("SURAT COUNT:", snap.size);
+
         setSuratList(
           snap.docs.map(
             (d) => ({ id: d.id, ...d.data() }) as SuratDoc & { id: string },
           ),
         );
+
         setLoadingSurat(false);
       },
-      () => setLoadingSurat(false),
+      (err) => {
+        console.error(err);
+        setLoadingSurat(false);
+      },
     );
+
     return () => unsub();
-  }, [user.name]);
+  }, [user.uid]);
 
   // Fetch active templates
   useEffect(() => {
