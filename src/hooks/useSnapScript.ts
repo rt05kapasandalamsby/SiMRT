@@ -5,9 +5,16 @@
  */
 import { useState, useEffect } from "react";
 
-const SNAP_URL   = "https://app.sandbox.midtrans.com/snap/snap.js";
-const CLIENT_KEY = "Mid-client-ctC99iAlzQNhSwl0";
+const IS_PRODUCTION =
+  import.meta.env.VITE_MIDTRANS_IS_PRODUCTION === "true";
 
+const SNAP_URL = IS_PRODUCTION
+  ? "https://app.midtrans.com/snap/snap.js"
+  : "https://app.sandbox.midtrans.com/snap/snap.js";
+
+const CLIENT_KEY =
+  import.meta.env.VITE_MIDTRANS_CLIENT_KEY ?? "";
+  
 type ScriptState = "idle" | "loading" | "ready" | "error";
 
 export function useSnapScript(): ScriptState {
