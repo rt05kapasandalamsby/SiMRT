@@ -225,6 +225,9 @@ export function DashboardHome({ setPage }: { setPage: (p: Page) => void }) {
       }),
     };
 
+    //Tes debug
+    console.log("SYNCING PUBLIC STATS", stats);
+
     // existing localStorage
     savePublicStats(stats);
 
