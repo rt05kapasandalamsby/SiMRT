@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getSession } from "../../auth";
-import { getPublicStats, type PublicStats } from "../lib/rtStats";
+import { usePublicStats } from "../../hooks/usePublicStats";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1693291757555-4c9d84d11c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZWlnaGJvcmhvb2QlMjByZXNpZGVudGlhbCUyMGhvdXNlcyUyMEluZG9uZXNpYXxlbnwxfHx8fDE3NzczMDY0OTN8MA&ixlib=rb-4.1.0&q=80&w=1080";
@@ -74,7 +74,7 @@ const layananList = [
 export function LandingPage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [stats] = useState<PublicStats | null>(() => getPublicStats());
+  const { stats } = usePublicStats();
 
   const rtStats = [
     { value: stats?.totalWarga ? `${stats.totalWarga} KK` : "—", label: "Kepala Keluarga" },
