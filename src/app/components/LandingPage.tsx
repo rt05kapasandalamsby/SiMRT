@@ -95,13 +95,22 @@ export function LandingPage() {
 
   //
   useEffect(() => {
-  const session = getSession();
-  if (session) {
-    navigate(session.role === "Admin" ? "/dashboard" : "/warga", {
-      replace: true,
-    });
-  }
-}, [navigate]);
+    const unsub = onSnapshot(
+      doc(db, "public_stats", "current"),
+      (snap) => {
+        console.log("PUBLIC STATS READ", snap.data());
+
+        if (snap.exists()) {
+          setStats(snap.data() as PublicStats);
+        }
+      },
+      (err) => {
+        console.error("PUBLIC STATS READ ERROR", err);
+      }
+    );
+
+    return () => unsub();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white font-sans">
