@@ -225,11 +225,19 @@ export function DashboardHome({ setPage }: { setPage: (p: Page) => void }) {
       }),
     };
 
+    // existing localStorage
+    savePublicStats(stats);
+
     //Tes debug
     console.log("SYNCING PUBLIC STATS", stats);
 
-    // existing localStorage
-    savePublicStats(stats);
+    setDoc(
+      doc(db, "public_stats", "current"),
+      stats,
+      { merge: true }
+    )
+    .then(() => console.log("PUBLIC STATS SAVED"))
+    .catch((err) => console.error("PUBLIC STATS ERROR", err));
 
     // new Firestore sync
     setDoc(
