@@ -7,7 +7,9 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getSession } from "../../auth";
-import { getPublicStats, type PublicStats } from "../lib/rtStats";
+import type { PublicStats } from "../lib/rtStats";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1693291757555-4c9d84d11c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZWlnaGJvcmhvb2QlMjByZXNpZGVudGlhbCUyMGhvdXNlcyUyMEluZG9uZXNpYXxlbnwxfHx8fDE3NzczMDY0OTN8MA&ixlib=rb-4.1.0&q=80&w=1080";
@@ -74,7 +76,7 @@ const layananList = [
 export function LandingPage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [stats] = useState<PublicStats | null>(() => getPublicStats());
+  const [stats, setStats] = useState<PublicStats | null>(null);
 
   const rtStats = [
     { value: stats?.totalWarga ? `${stats.totalWarga} KK` : "—", label: "Kepala Keluarga" },
@@ -90,6 +92,16 @@ export function LandingPage() {
       navigate(session.role === "Admin" ? "/dashboard" : "/warga", { replace: true });
     }
   }, [navigate]);
+
+  //
+  useEffect(() => {
+  const session = getSession();
+  if (session) {
+    navigate(session.role === "Admin" ? "/dashboard" : "/warga", {
+      replace: true,
+    });
+  }
+}, [navigate]);
 
   return (
     <div className="min-h-screen bg-white font-sans">
