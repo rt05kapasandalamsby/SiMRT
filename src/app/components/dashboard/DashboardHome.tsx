@@ -10,13 +10,22 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import {
-  collection, query, where, getDocs, onSnapshot,
-  orderBy, limit, Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  limit,
+  Timestamp,
+  doc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { rtInfo, COLL, type Page, type IuranDoc, type PengumumanDoc, type AktivitasDoc } from "./data";
 import { Avatar, AnimListItem, showToast } from "./ui";
 import { savePublicStats } from "../../lib/rtStats";
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -203,15 +212,37 @@ export function DashboardHome({ setPage }: { setPage: (p: Page) => void }) {
   // Sync real data to localStorage so LandingPage can show live stats
   useEffect(() => {
     if (loading) return;
-    savePublicStats({
+
+    const stats = {
       totalWarga,
-      iuranLunas:     totalLunas,
-      iuranBulan:     totalBulan,
+      iuranLunas: totalLunas,
+      iuranBulan: totalBulan,
       iuranTerkumpul: totalIuran,
       pengumumanAktif: pengAktif,
-      bulan: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
-    });
-  }, [loading, totalWarga, totalLunas, totalIuran, totalBulan, pengAktif]);
+      bulan: new Date().toLocaleDateString("id-ID", {
+        month: "long",
+        year: "numeric",
+      }),
+    };
+
+    // existing localStorage
+    savePublicStats(stats);
+
+    // new Firestore sync
+    setDoc(
+      doc(db, "public_stats", "current"),
+      stats,
+      { merge: true }
+    ).catch(console.error);
+
+  }, [
+    loading,
+    totalWarga,
+    totalLunas,
+    totalIuran,
+    totalBulan,
+    pengAktif,
+  ]);
 
   if (loading) return <DashboardSkeleton />;
 
